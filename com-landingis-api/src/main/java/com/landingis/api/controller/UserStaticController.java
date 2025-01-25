@@ -5,8 +5,6 @@ import com.landingis.api.exception.UserNotFoundException;
 import com.landingis.api.service.UserStaticService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,21 +24,14 @@ public class UserStaticController {
     }
 
     @GetMapping(path = {"/user/{id}"})
-    public Resource<User> retrieveUser(@PathVariable int id){
+    public User retrieveUser(@PathVariable int id){
         User user = userService.findById(id);
 
         if (user == null) {
             throw new UserNotFoundException("id-" + id);
         }
 
-        Resource<User> resource = new Resource<User>(user);
-
-        ControllerLinkBuilder linkBuilder = ControllerLinkBuilder
-                .linkTo(ControllerLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
-
-        resource.add(linkBuilder.withRel("all-users"));
-
-        return resource;
+        return user;
     }
 
     @PostMapping(path = {"/user"})

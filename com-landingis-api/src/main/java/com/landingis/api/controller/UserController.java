@@ -7,8 +7,6 @@ import com.landingis.api.service.PostService;
 import com.landingis.api.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,21 +30,14 @@ public class UserController {
     }
 
     @GetMapping(path = {"/jpa/user/{id}"})
-    public Resource<User> retrieveUser(@PathVariable Integer id){
+    public User retrieveUser(@PathVariable Integer id){
         Optional<User> users = userService.findOne(id);
 
         if (users.isEmpty()) {
             throw new UserNotFoundException("id-" + id);
         }
 
-        Resource<User> resource = new Resource<User>(users.get());
-
-        ControllerLinkBuilder linkBuilder = ControllerLinkBuilder
-                .linkTo(ControllerLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
-
-        resource.add(linkBuilder.withRel("all-users"));
-
-        return resource;
+        return users.get();
     }
 
     @PostMapping(path = {"/jpa/user"})
